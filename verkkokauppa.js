@@ -264,7 +264,6 @@ app.get('/customerorders', async (req,res) => {
     }
 });
 
-
 async function getOrders(username){
     try {
         const connection = await mysql.createConnection(conf);
@@ -286,7 +285,8 @@ async function getOrders(username){
 
 
         return result;
-    } catch (err) {
-       throw new Error(err.message);
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({ error: err.message });
     }
 }
