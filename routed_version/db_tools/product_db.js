@@ -12,9 +12,15 @@ const sql = {
 /**
  * Gets all the products
  */
-async function getProducts(){
-    const [rows] = await dbPool.execute(sql.GET_PRODUCTS);
-    return rows;
+async function getProducts(category){
+    let result;
+    if(category){
+        result = await dbPool.execute(sql.GET_PRODUCTS_CATEGORY, [category]);
+    }else{
+        result = await dbPool.execute(sql.GET_PRODUCTS);
+    }
+    
+    return result[0];
 }
 
 /**

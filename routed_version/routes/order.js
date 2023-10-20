@@ -6,7 +6,7 @@ const {auth} = require('../auth/auth');
 /**
  * Endpoint for placing an order 
  */
-router.post('/addorder', async (req, res) => {
+router.post('/order', async (req, res) => {
 
     try {
         const order = req.body;
@@ -27,7 +27,7 @@ router.post('/addorder', async (req, res) => {
  * Endpoint for getting orders of the customer
  * Token is verified in the auth middleware.
  */
-router.get('/customerorders', auth, async (req,res) => {
+router.get('/orders', auth, async (req,res) => {
     try{
         const orders = await getCustomerOrders(res.locals.username);
         res.status(200).json(orders);

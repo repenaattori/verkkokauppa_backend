@@ -11,6 +11,7 @@ const multer = require('multer');
 const upload = multer({ dest: "uploads/" });
 
 var express = require('express');
+const e = require('cors');
 var app = express();
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -35,39 +36,31 @@ const conf = {
 
 
 /**
- * Gets all the products
+ * Gets the products
+ * Optional category query parameter for filtering only products from that category
  */
 app.get('/products', async (req, res) => {
     try {
         const connection = await mysql.createConnection(conf);
 
-        const [rows] = await connection.execute("SELECT id, product_name productName, price, image_url imageUrl, category  FROM product");
-
-        res.json(rows);
-
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
-
-/**
- * Gets all the products in spesific category
- */
-app.get('/categoryproducts', async (req, res) => {
-    
-    try {
-        const connection = await mysql.createConnection(conf);
-
         const category = req.query.category;
 
-        const [rows] = await connection.execute("SELECT id, product_name productName, price, image_url imageUrl, category  FROM product WHERE category=?", [category]);
+        let result;        
 
-        res.json(rows);
+        if(category){
+            result = await connection.execute("SELECT id, product_name productName, price, image_url imageUrl, category  FROM product WHERE category=?", [category]);
+        }else{
+            result = await connection.execute("SELECT id, product_name productName, price, image_url imageUrl, category  FROM product");
+        }
+        
+        //First index in the result contains the rows in an array
+        res.json(result[0]);
 
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
 });
+
 
 /**
  * Gets all the categories
@@ -86,7 +79,7 @@ app.get('/categories', async (req, res) => {
     }
 });
 
-app.get('/getuserdata', async(req,res) => {
+app.get('/customer', async(req,res) => {
 
     //Get the bearer token from authorization header
     const token = req.headers.authorization.split(' ')[1];
@@ -104,9 +97,9 @@ app.get('/getuserdata', async(req,res) => {
 });
 
 /**
- * Adds new product category
+ * Adds new product categories
  */
-app.post('/addcategories', async (req, res) => {
+app.post('/categories', async (req, res) => {
 
     const connection = await mysql.createConnection(conf);
 
@@ -131,7 +124,7 @@ app.post('/addcategories', async (req, res) => {
 
 /**
  * Adds new products */
-app.post('/addproducts', async (req, res) => {
+app.post('/products', async (req, res) => {
 
     const connection = await mysql.createConnection(conf);
 
@@ -156,9 +149,9 @@ app.post('/addproducts', async (req, res) => {
 
 
 /**
- * Place an order 
+ * Place an order. 
  */
-app.post('/addorder', async (req, res) => {
+app.post('/order', async (req, res) => {
 
     let connection;
 
@@ -248,7 +241,7 @@ app.post('/login', upload.none(), async (req, res) => {
 /**
  * Gets orders of the customer
  */
-app.get('/customerorders', async (req,res) => {
+app.get('/orders', async (req,res) => {
     
     //Get the bearer token from authorization header
     const token = req.headers.authorization.split(' ')[1];

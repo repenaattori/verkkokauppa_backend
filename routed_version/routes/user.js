@@ -66,7 +66,7 @@ router.post('/login', upload.none(), async (req, res) => {
  * Endpoint for getting user spesific data.
  * Token is verified in the auth middleware.
  */
-router.get('/getuserdata', auth, async(req,res) => {
+router.get('/customer', auth, async(req,res) => {
     try{
         const userdata = await getUserData(res.locals.username);
         if(!userdata){

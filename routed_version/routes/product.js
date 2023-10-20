@@ -3,34 +3,23 @@ const {getProducts, getCategoryProducts, addProducts, getCategories, addCategori
 
 
 /**
- * Endpoint for getting all the products
+ * Endpoint for getting the products. 
+ * Optional category query parameter for filtering only products from that category
  */
 router.get('/products', async (req, res) => {
+    const category = req.query.category;
     try {
-       res.status(200).json(await getProducts());
+       res.status(200).json(await getProducts(category));
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
 });
 
-
-
-/**
- * Endpoint for getting all the products in a spesific category
- */
-router.get('/categoryproducts', async (req, res) => {
-    try {
-        const category = req.query.category;
-        res.status(200).json(await getCategoryProducts(category));
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
 
 /**
  * Endpoint for adding new products 
  */
-router.post('/addproducts', async (req, res) => {
+router.post('/products', async (req, res) => {
     try {
         const products = req.body;
         await addProducts(products);
@@ -54,7 +43,7 @@ router.get('/categories', async (req, res) => {
 /**
  * Endpoint for adding new product categories
  */
-router.post('/addcategories', async (req, res) => {
+router.post('/categories', async (req, res) => {
     try {
         const categories = req.body;
         await addCategories(categories);
