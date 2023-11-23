@@ -19,7 +19,7 @@ app.use(cors());
 app.use(express.static('public'));
 
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT;
 
 app.listen(PORT, function () {
     console.log('Server running on port ' + PORT);
@@ -36,10 +36,16 @@ const conf = {
 
 
 /**
- * Makes public files accessible
+ * Makes all public files accessible
  */
 
 app.use('/files', express.static('assets/public'));
+
+/**
+ * Makes product images accessible
+ */
+
+app.use('/products', express.static('assets/public/products'));
 
 /**
  * Gets the products
@@ -51,13 +57,15 @@ app.get('/products', async (req, res) => {
 
         const category = req.query.category;
 
-        let result;
-
-        if (category) {
-            result = await connection.execute("SELECT id, product_name productName, price, image_url imageUrl, category  FROM product WHERE category=?", [category]);
-        } else {
-            result = await connection.execute("SELECT id, product_name productName, price, image_url imageUrl, category  FROM product");
-        }
+        const result = (category)
+        ? await connection.execute("SELECT id, product_name AS productName, price, units_stored AS unitsStored, product_description AS productDescription, image_url AS imageUrl, category FROM product WHERE category=?", [category])
+        : await connection.execute("SELECT id, product_name AS productName, price, units_stored AS unitsStored, product_description AS productDescription, image_url AS imageUrl, category FROM product")
+        // remove
+        // if (category) {
+        //     result = await connection.execute("SELECT id, product_name AS productName, price, units_stored AS unitsStored, product_description AS productDescription, image_url AS imageUrl, category FROM product WHERE category=?", [category]);
+        // } else {
+        //     result = await connection.execute("SELECT id, product_name AS productName, price, units_stored AS unitsStored, product_description AS productDescription, image_url AS imageUrl, category FROM product");
+        // }
 
         //First index in the result contains the rows in an array
         res.json(result[0]);
@@ -76,7 +84,7 @@ app.get('/categories', async (req, res) => {
     try {
         const connection = await mysql.createConnection(conf);
 
-        const [rows] = await connection.execute("SELECT category_name categoryName, category_description description FROM product_category");
+        const [rows] = await connection.execute("SELECT category_name AS categoryName, category_description AS categoryDescription FROM product_category");
 
         res.json(rows);
 
@@ -85,7 +93,7 @@ app.get('/categories', async (req, res) => {
     }
 });
 
-app.get('/customer', async (req, res) => {
+/*app.get('/customer', async (req, res) => {
 
     //Get the bearer token from authorization header
     const token = req.headers.authorization.split(' ')[1];
@@ -94,7 +102,7 @@ app.get('/customer', async (req, res) => {
     try {
         const username = jwt.verify(token, process.env.JWT_KEY).username;
         const connection = await mysql.createConnection(conf);
-        const [rows] = await connection.execute('SELECT first_name fname, last_name lname, username FROM customer WHERE username=?', [username]);
+        const [rows] = await connection.execute('SELECT first_name fname, last_name lname, username FROM user WHERE username=?', [username]);
         res.status(200).json(rows[0]);
     } catch (err) {
         console.log(err.message);
@@ -102,10 +110,11 @@ app.get('/customer', async (req, res) => {
     }
 });
 
+
 /**
  * Adds new product categories
  */
-app.post('/categories', async (req, res) => {
+/*app.post('/categories', async (req, res) => {
 
     const connection = await mysql.createConnection(conf);
 
@@ -130,7 +139,7 @@ app.post('/categories', async (req, res) => {
 /**
  * Adds new products 
  */
-app.post('/products', async (req, res) => {
+/*app.post('/products', async (req, res) => {
 
     const connection = await mysql.createConnection(conf);
 
@@ -157,7 +166,7 @@ app.post('/products', async (req, res) => {
 /**
  * Place an order. 
  */
-app.post('/order', async (req, res) => {
+/*app.post('/order', async (req, res) => {
 
     let connection;
 
@@ -191,7 +200,7 @@ app.post('/order', async (req, res) => {
 /**
  * Registers user. Supports urlencoded and multipart
  */
-app.post('/register', upload.none(), async (req, res) => {
+/*app.post('/register', upload.none(), async (req, res) => {
     const fname = req.body.fname;
     const lname = req.body.lname;
     const uname = req.body.username;
@@ -202,7 +211,7 @@ app.post('/register', upload.none(), async (req, res) => {
 
         const pwHash = await bcrypt.hash(pw, 10);
 
-        const [rows] = await connection.execute('INSERT INTO customer(first_name,last_name,username,pw) VALUES (?,?,?,?)', [fname, lname, uname, pwHash]);
+        const [rows] = await connection.execute('INSERT INTO user(first_name,last_name,username,pw) VALUES (?,?,?,?)', [fname, lname, uname, pwHash]);
 
         res.status(200).end();
 
@@ -216,7 +225,7 @@ app.post('/register', upload.none(), async (req, res) => {
  * Checks the username and password and returns jwt authentication token if authorized. 
  * Supports urlencoded or multipart
  */
-app.post('/login', upload.none(), async (req, res) => {
+/*app.post('/login', upload.none(), async (req, res) => {
     const uname = req.body.username;
     const pw = req.body.pw;
 
@@ -224,7 +233,7 @@ app.post('/login', upload.none(), async (req, res) => {
     try {
         const connection = await mysql.createConnection(conf);
 
-        const [rows] = await connection.execute('SELECT pw FROM customer WHERE username=?', [uname]);
+        const [rows] = await connection.execute('SELECT pw FROM user WHERE username=?', [uname]);
 
         if (rows.length > 0) {
             const isAuth = await bcrypt.compare(pw, rows[0].pw);
@@ -245,9 +254,9 @@ app.post('/login', upload.none(), async (req, res) => {
 
 
 /**
- * Gets orders of the customer
+ * Gets orders of the user
  */
-app.get('/orders', async (req, res) => {
+/*app.get('/orders', async (req, res) => {
 
     //Get the bearer token from authorization header
     const token = req.headers.authorization.split(' ')[1];
@@ -266,7 +275,7 @@ app.get('/orders', async (req, res) => {
 async function getOrders(username) {
     try {
         const connection = await mysql.createConnection(conf);
-        const [rows] = await connection.execute('SELECT customer_order.order_date AS date, customer_order.id as orderId FROM customer_order INNER JOIN customer ON customer.id = customer_order.customer_id WHERE customer.username=?', [username]);
+        const [rows] = await connection.execute('SELECT customer_order.order_date AS date, customer_order.id AS orderId FROM customer_order INNER JOIN user ON user.id = customer_order.customer_id WHERE user.username=?', [username]);
 
         let result = [];
 
@@ -289,3 +298,4 @@ async function getOrders(username) {
         res.status(500).json({ error: err.message });
     }
 }
+*/
