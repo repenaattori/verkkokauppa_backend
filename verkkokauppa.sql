@@ -109,14 +109,14 @@ VALUES (
     ), (
         "Nikon Night2",
         4998.99,
-        "https://big.kapsi.fi/products/camera_nightvision2.jpg",
+        "https://big.kapsi.fi/products/camera_nightvision_2.jpg",
         "Kuvaus",
         "Sama kuin Nikon Night mutta 3D ominaisuus",
         3
     ), (
         "Kodak Scope",
         2989.99,
-        "https://big.kapsi.fi/products/camera_scope.jpg",
+        "https://big.kapsi.fi/products/camera_scoped.jpg",
         "Kuvaus",
         "Kamera ja kiikarit samassa ",
         25
@@ -130,7 +130,7 @@ VALUES (
     ), (
         "Canon RIP",
         1989.99,
-        "https://big.kapsi.fi/products/camera_skulls.jpg'",
+        "https://big.kapsi.fi/products/camera_skulls.jpg",
         "Kuvaus",
         "Synkän kuvaajan unelma",
         11
@@ -144,14 +144,14 @@ VALUES (
     ), (
         "Viikset 2",
         14.99,
-        "https://big.kapsi.fi/products/moustache_and_playdoh.jpg",
+        "https://big.kapsi.fi/products/moustache_playdoh.jpg",
         "Muoti",
         "Näyttävät viikset",
         31
     ), (
         "Viikset 3",
         9.99,
-        "https://big.kapsi.fi/products/moustache_and_rainbow.jpg",
+        "https://big.kapsi.fi/products/moustache_rainbow.jpg",
         "Muoti",
         "Viikset vaikka Pride tapahtumaan",
         55
