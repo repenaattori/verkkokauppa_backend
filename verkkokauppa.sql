@@ -194,7 +194,7 @@ VALUES (
         "What is this",
         33.99,
         "https://big.kapsi.fi/products/scale_model_what.jpg",
-        "Sisutus",
+        "Sisustus",
         "Mikä ihme tämä on",
         2
     ), (
