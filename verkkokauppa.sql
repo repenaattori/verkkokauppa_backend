@@ -109,7 +109,7 @@ VALUES (
     ), (
         "Nikon Night2",
         4998.99,
-        "https://big.kapsi.fi/products/camera_nightvision_2.jpg",
+        "https://big.kapsi.fi/products/camera_nightvision_02.jpg",
         "Kuvaus",
         "Sama kuin Nikon Night mutta 3D ominaisuus",
         3
