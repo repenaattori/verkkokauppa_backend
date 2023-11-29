@@ -244,7 +244,7 @@ app.post('/login', upload.none(), async (req, res) => {
 app.get('/orders', async (req,res) => {
     
     //Get the bearer token from authorization header
-    const token = req.headers.authorization.split(' ')[1];
+    const token = req.headers.authorization?.split(' ')[1];
 
     //Verify the token. Verified token contains username
     try{
